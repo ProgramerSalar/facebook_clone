@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from PIL import Image
 from shortuuid.django_fields import ShortUUIDField
 
-
+from django.db.models.signals import post_save
 # Create your models here.
 from django.utils.text import slugify
 import shortuuid
@@ -76,11 +76,7 @@ class Profile(models.Model):
 
 
     def __str__(self):
-        if self.full_name != "" or self.full_name != None:
-            return self.full_name
-        
-        else:
-            return self.user.username
+        return self.user.username
         
     
 
@@ -90,3 +86,21 @@ class Profile(models.Model):
             uniqueid = uuid_key[:4]
             self.slug  = slugify(self.full_name) + '-' + str(uniqueid.lower())
         super(Profile,self).save(*args, **kwargs)
+
+
+
+
+
+
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save 
+
+
+post_save.connect(create_user_profile, sender=User)
+post_save.connect(save_user_profile, sender=User)
+
+
