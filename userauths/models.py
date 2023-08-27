@@ -5,6 +5,8 @@ from shortuuid.django_fields import ShortUUIDField
 
 
 # Create your models here.
+from django.utils.text import slugify
+import shortuuid
 
 
 GENDER = (
@@ -70,9 +72,21 @@ class Profile(models.Model):
     friends = models.ManyToManyField(User, blank=True, related_name='friends')
     blocked = models.ManyToManyField(User, blank=True, related_name='blocked')
     date = models.DateTimeField(auto_now_add=True)
+    slug = models.SlugField(unique=True,blank=True,null=True)
 
 
     def __str__(self):
-        return self.user.username
+        if self.full_name != "" or self.full_name != None:
+            return self.full_name
+        
+        else:
+            return self.user.username
+        
     
 
+    def save(self, *args, **kwargs):
+        if self.slug == "" or self.slug == None:
+            uuid_key = shortuuid.uuid()
+            uniqueid = uuid_key[:4]
+            self.slug  = slugify(self.full_name) + '-' + str(uniqueid.lower())
+        super(Profile,self).save(*args, **kwargs)
