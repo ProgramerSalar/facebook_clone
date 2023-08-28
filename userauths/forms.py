@@ -22,34 +22,3 @@ class UserRegisterForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'with-border'
-            # visible.field.widget.attrs['placeholder'] = visible.field.label
-
-
-class ProfileUpdateForm(forms.ModelForm):
-    image = ImageField(widget=FileInput)
-    
-    class Meta:
-        model = Profile
-        fields = [
-            'cover_image' ,
-            'image' ,
-            'full_name', 
-            'bio', 
-            'about_me', 
-            'phone',
-            'gender',
-            'relationship',
-            'friends_visibility',
-            'country', 
-            'city', 
-            'state', 
-            'address', 
-            'working_at',
-            'instagram',
-            'whatsApp',
-        ]
-
-class UserUpdateForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['username', 'email']
